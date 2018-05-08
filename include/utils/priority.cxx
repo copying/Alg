@@ -1,5 +1,5 @@
-#ifndef ALGORITHMS__UTILS__PRIORITY
-#define ALGORITHMS__UTILS__PRIORITY
+#ifndef ALG__UTILS__PRIORITY__CXX
+#define ALG__UTILS__PRIORITY__CXX
 
 #include <cstdint>
 
@@ -11,4 +11,4 @@ namespace alg::utils {
     struct priority<0> {};
 }
 
-#endif // ALGORITHMS__UTILS__PRIORITY
+#endif // ALG__UTILS__PRIORITY__CXX
