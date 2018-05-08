@@ -8,7 +8,7 @@ namespace alg::utils {
         constexpr void_optional() noexcept
         : _has_value{true}
         {}
-        constexpr void_optional(std::nullopt_t&&) noexcept
+        constexpr void_optional(std::nullopt_t) noexcept
         : _has_value{false}
         {}
 
