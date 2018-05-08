@@ -52,7 +52,19 @@ TEST_CASE("call_if makes a new functor that calls the function if, with the same
             []{}
         };
 
+        REQUIRE( static_cast<bool>(example()) );
+    }
+
+    SECTION("Convert functor's return type to an optional") {
+        auto example = make_functor_optional_t {
+            []() -> int { return 5; }
+        };
 
         REQUIRE( static_cast<bool>(example()) );
+        REQUIRE( *(example()) == 5 );
+        REQUIRE(std::is_same_v<
+            decltype(example()),
+            std::optional<int>
+        >);
     }
 }

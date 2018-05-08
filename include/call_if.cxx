@@ -42,6 +42,14 @@ namespace alg {
 
     template <typename Functor, typename Condition>
     call_if (Functor &&, Condition &&) -> call_if<std::decay_t<Functor>, std::decay_t<Condition>>;
+
+
+    template <typename Functor>
+    struct make_functor_optional_t : call_if<Functor> {};
+
+    template <typename Functor>
+    make_functor_optional_t (Functor &&) -> make_functor_optional_t<std::decay_t<Functor>>;
+
 }
 
 #endif // ALG__C  ALL_IF__CXX
