@@ -27,7 +27,10 @@ namespace alg {
         -> Return<decltype(Functor::operator()(std::declval<Ts>()...))>
         {
             if (Condition::operator()(std::forward<Ts>(ts)...))
-                return Functor::operator()(std::forward<Ts>(ts)...);
+                if constexpr ( std::is_same_v<decltype(Functor::operator()(std::declval<Ts>()...)), void> )
+                    Functor::operator()(std::forward<Ts>(ts)...);
+                else
+                    return Functor::operator()(std::forward<Ts>(ts)...);
             else
                 return std::nullopt;
         }

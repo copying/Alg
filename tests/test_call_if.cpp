@@ -37,4 +37,22 @@ TEST_CASE("call_if makes a new functor that calls the function if, with the same
             std::optional<int>
         >);
     }
+
+
+    SECTION("No arguments") {
+        auto example = call_if {
+            []{ return 0; }
+        };
+
+        REQUIRE( static_cast<bool>(example()) );
+    }
+
+    SECTION("void as a return type") {
+        auto example = call_if {
+            []{}
+        };
+
+
+        REQUIRE( static_cast<bool>(example()) );
+    }
 }
