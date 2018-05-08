@@ -1,6 +1,8 @@
 #ifndef ALG__UTILS__OPTIONAL__CXX
 #define ALG__UTILS__OPTIONAL__CXX
 
+#include "void_optional.cxx"
+
 #include <type_traits>
 #include <optional>
 
@@ -20,7 +22,12 @@ namespace alg::utils {
                 >
             >
         > : std::true_type {};
+
+        template<>
+        struct is_optional_<void_optional> : std::true_type {};
     }
+
+
     template <typename T>
     using is_optional = is_optional_<std::decay_t<T>>;
 
@@ -37,9 +44,16 @@ namespace alg::utils {
         template<typename T>
         using make_optional_ =
             std::conditional<
-                utils::is_optional_v<T>,
+                is_optional_v<T>,
                 T,
-                std::optional<T>
+                std::conditional_t<
+                    std::is_same_v<
+                        T,
+                        void
+                    >,
+                    void_optional,
+                    std::optional<T>
+                >
             >;
     }
 

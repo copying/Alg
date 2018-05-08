@@ -1,6 +1,7 @@
 #include <catch.hpp>
 
 
+#include "../../include/utils/void_optional.cxx"
 #include "../../include/utils/optional.cxx"
 
 #include <optional>
@@ -44,6 +45,11 @@ TEST_CASE("is_optional checks if a type is of the type std::optional", "[is_opti
         REQUIRE(is_optional_v<const std::optional<float>&>);
         REQUIRE(is_optional_v<const std::optional<A>&>);
     }
+
+    SECTION("void") {
+        REQUIRE_FALSE(is_optional_v<void>);
+        REQUIRE(is_optional_v<void_optional>);
+    }
 }
 
 
@@ -68,5 +74,9 @@ TEST_CASE("make_optional returns the optional type of the given type", "[make_op
         REQUIRE(std::is_same_v<make_optional_t<volatile int>, std::optional<int>>);
         REQUIRE(std::is_same_v<make_optional_t<volatile float>, std::optional<float>>);
         REQUIRE(std::is_same_v<make_optional_t<volatile A>, std::optional<A>>);
+    }
+
+    SECTION("void") {
+        REQUIRE(std::is_same_v<make_optional_t<void>, void_optional>);
     }
 }
