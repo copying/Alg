@@ -8,8 +8,8 @@
 
 namespace alg {
     struct TrueFunctor {
-        template <typename ... Ts>
-        constexpr bool operator()(Ts && ...) const {
+        template <typename ... Args>
+        constexpr bool operator()(Args && ...) const noexcept {
             return true;
         }
     };
@@ -23,28 +23,36 @@ namespace alg {
 
     public:
         template <typename Func>
-        constexpr call_if(Func&& func)
+        constexpr call_if(Func&& func) noexcept(
+            noexcept(Functor{std::forward<Func>(std::declval<Func>())})
+        )
         : Functor{std::forward<Func>(func)},
           TrueFunctor{}
         {}
         template <typename Func, typename Cond>
-        constexpr call_if(Func&& func, Cond&& cond)
+        constexpr call_if(Func&& func, Cond&& cond) noexcept(
+            noexcept(Functor{std::forward<Func>(std::declval<Func>())})
+            && noexcept(Condition{std::forward<Cond>(std::declval<Cond>())})
+        )
         : Functor{std::forward<Func>(func)},
           Condition{std::forward<Cond>(cond)}
         {}
 
-        template <typename ... Ts>
-        constexpr inline auto operator()(Ts && ... ts) const
-        -> Return<decltype(Functor::operator()(std::declval<Ts>()...))>
+        template <typename ... Args>
+        constexpr inline auto operator()(Args && ... args) const noexcept(
+            noexcept(std::declval<Condition>()(std::declval<Args>()...))
+            && noexcept(std::declval<Functor>()(std::declval<Args>()...))
+        )
+        -> Return<decltype(Functor::operator()(std::declval<Args>()...))>
         {
-            using FR = decltype(Functor::operator()(std::declval<Ts>()...));
+            using FR = decltype(Functor::operator()(std::declval<Args>()...));
 
-            if (Condition::operator()(std::forward<Ts>(ts)...)) {
+            if (Condition::operator()(std::forward<Args>(args)...)) {
                 if constexpr ( std::is_same_v<FR, void> ) {
-                    Functor::operator()(std::forward<Ts>(ts)...);
+                    Functor::operator()(std::forward<Args>(args)...);
                     return {};
                 } else {
-                    return Functor::operator()(std::forward<Ts>(ts)...);
+                    return Functor::operator()(std::forward<Args>(args)...);
                 }
             } else {
                 return std::nullopt;

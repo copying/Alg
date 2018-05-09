@@ -86,4 +86,21 @@ TEST_CASE("call_if makes a new functor that calls the function if, with the same
             utils::void_optional
         >);
     }
+
+    SECTION("Maintain constexpr-ness") {
+        constexpr auto example = make_functor_optional_t {
+            []() constexpr -> int { return 5; }
+        };
+
+        constexpr int const result = *(example());
+        REQUIRE( result == 5 );
+    }
+
+    SECTION("Maintain noexcept-ness") {
+        auto example = make_functor_optional_t {
+            []() noexcept -> int { return 5; }
+        };
+
+        REQUIRE( noexcept(example()) );
+    }
 }

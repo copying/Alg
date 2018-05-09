@@ -10,14 +10,20 @@ namespace alg {
 
     template <typename Functor>
     struct prioritize<Functor> : Functor {
-        template <typename ... Ts>
-        constexpr inline auto call(utils::priority<0>&&, Ts && ... ts) const {
-            return Functor::operator()(std::forward<Ts>(ts)...);
+        template <typename ... Args>
+        constexpr inline auto call(utils::priority<0>&&, Args && ... args) const noexcept (
+            noexcept(std::declval<Functor>()(std::declval<Args>()...))
+        )
+        {
+            return Functor::operator()(std::forward<Args>(args)...);
         }
 
-        template <typename ... Ts>
-        constexpr inline auto operator()(Ts && ... ts) const {
-            return Functor::operator()(std::forward<Ts>(ts)...);
+        template <typename ... Args>
+        constexpr inline auto operator()(Args && ... args) const noexcept (
+            noexcept(std::declval<Functor>()(std::declval<Args>()...))
+        )
+        {
+            return Functor::operator()(std::forward<Args>(args)...);
         }
     };
 
@@ -25,15 +31,20 @@ namespace alg {
     struct prioritize<Functor, Functors...> : Functor, prioritize<Functors...> {
         using prioritize<Functors...>::call;
 
-        template <typename ... Ts>
-        constexpr inline auto call(utils::priority<sizeof...(Functors)>&&, Ts && ... ts) const
-        -> decltype(Functor::operator()(std::declval<Ts>()...)) {
-            return Functor::operator()(std::forward<Ts>(ts)...);
+        template <typename ... Args>
+        constexpr inline auto call(utils::priority<sizeof...(Functors)>&&, Args && ... args) const noexcept (
+            noexcept(std::declval<Functor>()(std::declval<Args>()...))
+        )
+        -> decltype(Functor::operator()(std::declval<Args>()...)) {
+            return Functor::operator()(std::forward<Args>(args)...);
         }
 
-        template <typename ... Ts>
-        constexpr inline auto operator()(Ts && ... ts) const {
-            return call(utils::priority<sizeof...(Functors)>{}, std::forward<Ts>(ts)...);
+        template <typename ... Args>
+        constexpr inline auto operator()(Args && ... args) const noexcept (
+            noexcept(std::declval<prioritize<Functor, Functors...>>().call(std::declval<utils::priority<sizeof...(Functors)>>(), std::declval<Args>()...))
+        )
+        {
+            return call(utils::priority<sizeof...(Functors)>{}, std::forward<Args>(args)...);
         }
     };
 

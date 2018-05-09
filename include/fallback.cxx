@@ -10,7 +10,7 @@ namespace alg {
     template <typename ... Funcs>
     struct fallback {
         template<typename ... Args>
-        constexpr utils::void_optional operator()(Args && ... args) const {
+        constexpr utils::void_optional operator()(Args && ... args) const noexcept {
             return std::nullopt;
         }
     };
@@ -22,7 +22,10 @@ namespace alg {
 
     public:
         template<typename ... Args>
-        constexpr inline auto operator()(Args && ... args) const {
+        constexpr inline auto operator()(Args && ... args) const noexcept(
+            noexcept(std::declval<OpFunc>()(std::declval<Args>()...))
+        )
+        {
             return OpFunc::operator()(std::forward<Args>(args)...);
         }
     };
@@ -35,7 +38,11 @@ namespace alg {
 
     public:
         template<typename ... Args>
-        constexpr inline auto operator()(Args && ... args) const {
+        constexpr inline auto operator()(Args && ... args) const noexcept(
+            noexcept(std::declval<OpFunc>()(std::declval<Args>()...))
+            && noexcept(std::declval<Next>()(std::declval<Args>()...))
+        )
+        {
 
             // Do this type work together
             constexpr bool valid_types = std::is_convertible_v<

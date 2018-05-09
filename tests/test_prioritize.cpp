@@ -51,4 +51,29 @@ TEST_CASE("prioritize a function from another", "[prioritize]") {
             void
         >);
     }
+
+    SECTION("Check constexpr-ness") {
+        constexpr auto example = prioritize {
+            []() constexpr -> void {},
+            [](int i) constexpr -> int {
+                return i*2+1;
+            }
+        };
+
+        constexpr int const result = example(3);
+
+        REQUIRE( result == 7 );
+    }
+
+    SECTION("Check noexcept-ness") {
+        constexpr auto example = prioritize {
+            []() constexpr noexcept -> void {},
+            [](int i) constexpr noexcept -> int {
+                return i*2+1;
+            }
+        };
+
+        REQUIRE( noexcept(example()) );
+        REQUIRE( noexcept(example(5)) );
+    }
 }

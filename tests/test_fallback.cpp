@@ -56,4 +56,22 @@ TEST_CASE("fallsback to the next functor until it succeeds or has no more functo
         REQUIRE( static_cast<bool>(example()) );
         REQUIRE( is_set );
     }
+
+    SECTION("Maintain constexpr-ness") {
+        constexpr auto example = fallback {
+            []() constexpr -> int { return 5; }
+        };
+
+        constexpr int const result = *(example());
+        REQUIRE( result == 5 );
+    }
+
+    SECTION("Maintain noexcept-ness") {
+        auto example = fallback {
+            []() noexcept -> std::optional<int> { return std::nullopt; },
+            []() noexcept -> int { return 6; }
+        };
+
+        REQUIRE( noexcept(example()) );
+    }
 }
