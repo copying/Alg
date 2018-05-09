@@ -3,7 +3,7 @@
 
 #include "utils/void_optional.cxx"
 #include "utils/optional.cxx"
-#include "call_if.cxx"
+#include "return_optional.cxx"
 
 #include <type_traits>
 #include <optional>
@@ -18,9 +18,9 @@ namespace alg {
     };
 
     template <typename Func>
-    struct fallback<Func> : make_functor_optional_t<Func> {
+    struct fallback<Func> : return_optional<Func> {
     private:
-        using OpFunc = make_functor_optional_t<Func>;
+        using OpFunc = return_optional<Func>;
 
     public:
         template<typename ... Args>
@@ -33,9 +33,9 @@ namespace alg {
     };
 
     template <typename Func, typename ... Funcs>
-    struct fallback<Func, Funcs...> : make_functor_optional_t<Func>, fallback<Funcs...> {
+    struct fallback<Func, Funcs...> : return_optional<Func>, fallback<Funcs...> {
     private:
-        using OpFunc = make_functor_optional_t<Func>;
+        using OpFunc = return_optional<Func>;
         using Next = fallback<Funcs...>;
 
     public:
