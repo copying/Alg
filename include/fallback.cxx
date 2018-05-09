@@ -1,10 +1,12 @@
-#ifndef ALG__fallback_CXX
-#define ALG__fallback_CXX
+#ifndef ALG__FALLBACK__CXX
+#define ALG__FALLBACK__CXX
 
 #include "utils/void_optional.cxx"
 #include "utils/optional.cxx"
 #include "call_if.cxx"
 
+#include <type_traits>
+#include <optional>
 
 namespace alg {
     template <typename ... Funcs>
@@ -70,4 +72,4 @@ namespace alg {
     fallback(Ts && ...) -> fallback<std::decay_t<Ts>...>;
 }
 
-#endif // ALG__fallback_CXX
+#endif // ALG__FALLBACK__CXX
