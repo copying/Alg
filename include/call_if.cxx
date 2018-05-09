@@ -34,7 +34,7 @@ namespace alg {
         {}
 
         template <typename ... Ts>
-        constexpr auto operator()(Ts && ... ts) const
+        constexpr inline auto operator()(Ts && ... ts) const
         -> Return<decltype(Functor::operator()(std::declval<Ts>()...))>
         {
             using FR = decltype(Functor::operator()(std::declval<Ts>()...));

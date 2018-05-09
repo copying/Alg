@@ -12,10 +12,10 @@ namespace alg::utils {
         : _has_value{false}
         {}
 
-        constexpr explicit operator bool() const noexcept {
+        constexpr inline explicit operator bool() const noexcept {
             return _has_value;
         }
-        constexpr bool has_value() const noexcept {
+        constexpr inline bool has_value() const noexcept {
             return _has_value;
         }
 

@@ -22,7 +22,7 @@ namespace alg {
 
     public:
         template<typename ... Args>
-        constexpr auto operator()(Args && ... args) const {
+        constexpr inline auto operator()(Args && ... args) const {
             return OpFunc::operator()(std::forward<Args>(args)...);
         }
     };
@@ -35,7 +35,7 @@ namespace alg {
 
     public:
         template<typename ... Args>
-        constexpr auto operator()(Args && ... args) const {
+        constexpr inline auto operator()(Args && ... args) const {
 
             // Do this type work together
             constexpr bool valid_types = std::is_convertible_v<
