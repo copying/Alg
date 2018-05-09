@@ -2,6 +2,7 @@
 
 
 #include "../include/call_if.cxx"
+#include "../include/utils/void_optional.cxx"
 
 using namespace alg;
 
@@ -45,6 +46,10 @@ TEST_CASE("call_if makes a new functor that calls the function if, with the same
         };
 
         REQUIRE( static_cast<bool>(example()) );
+        REQUIRE(std::is_same_v<
+            decltype(example()),
+            std::optional<int>
+        >);
     }
 
     SECTION("void as a return type") {
@@ -52,7 +57,33 @@ TEST_CASE("call_if makes a new functor that calls the function if, with the same
             []{}
         };
 
+        REQUIRE( static_cast<bool>(example()) );
+        REQUIRE(std::is_same_v<
+            decltype(example()),
+            utils::void_optional
+        >);
+    }
+
+    SECTION("Convert functor's return type to an optional") {
+        auto example = make_functor_optional_t {
+            []() -> int { return 5; }
+        };
 
         REQUIRE( static_cast<bool>(example()) );
+        REQUIRE( *(example()) == 5 );
+        REQUIRE(std::is_same_v<
+            decltype(example()),
+            std::optional<int>
+        >);
+
+        auto example2 = make_functor_optional_t {
+            []{}
+        };
+
+        REQUIRE( static_cast<bool>(example()) );
+        REQUIRE(std::is_same_v<
+            decltype(example2()),
+            utils::void_optional
+        >);
     }
 }

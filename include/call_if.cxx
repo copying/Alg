@@ -22,17 +22,33 @@ namespace alg {
         using Return = utils::make_optional_t<BasicReturn>;
 
     public:
+        template <typename Func>
+        constexpr call_if(Func&& func)
+        : Functor{std::forward<Func>(func)},
+          TrueFunctor{}
+        {}
+        template <typename Func, typename Cond>
+        constexpr call_if(Func&& func, Cond&& cond)
+        : Functor{std::forward<Func>(func)},
+          Condition{std::forward<Cond>(cond)}
+        {}
+
         template <typename ... Ts>
         constexpr auto operator()(Ts && ... ts) const
         -> Return<decltype(Functor::operator()(std::declval<Ts>()...))>
         {
-            if (Condition::operator()(std::forward<Ts>(ts)...))
-                if constexpr ( std::is_same_v<decltype(Functor::operator()(std::declval<Ts>()...)), void> )
+            using FR = decltype(Functor::operator()(std::declval<Ts>()...));
+
+            if (Condition::operator()(std::forward<Ts>(ts)...)) {
+                if constexpr ( std::is_same_v<FR, void> ) {
                     Functor::operator()(std::forward<Ts>(ts)...);
-                else
+                    return {};
+                } else {
                     return Functor::operator()(std::forward<Ts>(ts)...);
-            else
+                }
+            } else {
                 return std::nullopt;
+            }
         }
     };
 
@@ -42,6 +58,14 @@ namespace alg {
 
     template <typename Functor, typename Condition>
     call_if (Functor &&, Condition &&) -> call_if<std::decay_t<Functor>, std::decay_t<Condition>>;
+
+
+    template <typename Functor>
+    struct make_functor_optional_t : call_if<Functor> {};
+
+    template <typename Functor>
+    make_functor_optional_t (Functor &&) -> make_functor_optional_t<std::decay_t<Functor>>;
+
 }
 
 #endif // ALG__C  ALL_IF__CXX
