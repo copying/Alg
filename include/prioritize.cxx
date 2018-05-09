@@ -11,7 +11,7 @@ namespace alg {
     template <typename Functor>
     struct prioritize<Functor> : Functor {
         template <typename ... Args>
-        constexpr inline auto call(utils::priority<0>&&, Args && ... args) const noexcept (
+        constexpr inline decltype(auto) call(utils::priority<0>&&, Args && ... args) const noexcept (
             noexcept(std::declval<Functor>()(std::declval<Args>()...))
         )
         {
@@ -19,7 +19,7 @@ namespace alg {
         }
 
         template <typename ... Args>
-        constexpr inline auto operator()(Args && ... args) const noexcept (
+        constexpr inline decltype(auto) operator()(Args && ... args) const noexcept (
             noexcept(std::declval<Functor>()(std::declval<Args>()...))
         )
         {
@@ -40,7 +40,7 @@ namespace alg {
         }
 
         template <typename ... Args>
-        constexpr inline auto operator()(Args && ... args) const noexcept (
+        constexpr inline decltype(auto) operator()(Args && ... args) const noexcept (
             noexcept(std::declval<prioritize<Functor, Functors...>>().call(std::declval<utils::priority<sizeof...(Functors)>>(), std::declval<Args>()...))
         )
         {
