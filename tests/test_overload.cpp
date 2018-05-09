@@ -34,7 +34,7 @@ TEST_CASE("Overload overloads callable objects into a new one", "[overload]") {
             }
         };
         REQUIRE( a(3) == example(3) );
-/*
+
         constexpr auto b = ovld {
             []() constexpr noexcept -> void {},
             [](int i) constexpr noexcept -> int {
@@ -42,6 +42,6 @@ TEST_CASE("Overload overloads callable objects into a new one", "[overload]") {
             }
         };
         REQUIRE( b(3) == example(3) );
-*/
+
     }
 }
