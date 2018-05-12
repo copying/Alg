@@ -81,3 +81,33 @@ TEST_CASE("make_optional returns the optional type of the given type", "[make_op
         REQUIRE(std::is_same_v<make_optional_t<void>, void_optional>);
     }
 }
+
+
+
+TEST_CASE("remove_optional returns the type of the given optional", "[remove_optional]") {
+    //*
+    SECTION("basic types") {
+        REQUIRE(std::is_same_v<remove_optional_t<std::optional<int>>, int>);
+        REQUIRE(std::is_same_v<remove_optional_t<std::optional<float>>, float>);
+        REQUIRE(std::is_same_v<remove_optional_t<std::optional<A>>, A>);
+    }
+
+    SECTION("cv qualified types") {
+        REQUIRE(std::is_same_v<remove_optional_t<const std::optional<int>>, int>);
+        REQUIRE(std::is_same_v<remove_optional_t<const std::optional<float>>, float>);
+        REQUIRE(std::is_same_v<remove_optional_t<const std::optional<A>>, A>);
+
+        REQUIRE(std::is_same_v<remove_optional_t<const std::optional<int>&>, int>);
+        REQUIRE(std::is_same_v<remove_optional_t<const std::optional<float>&>, float>);
+        REQUIRE(std::is_same_v<remove_optional_t<const std::optional<A>&>, A>);
+
+        REQUIRE(std::is_same_v<remove_optional_t<volatile std::optional<int>>, int>);
+        REQUIRE(std::is_same_v<remove_optional_t<volatile std::optional<float>>, float>);
+        REQUIRE(std::is_same_v<remove_optional_t<volatile std::optional<A>>, A>);
+    }
+//*/
+    SECTION("void") {
+        static_assert(std::is_same_v<std::decay_t<void_optional>, void_optional>);
+        REQUIRE(std::is_same_v<remove_optional_t<void_optional>, void>);
+    }
+}
