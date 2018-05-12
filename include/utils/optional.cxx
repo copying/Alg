@@ -9,20 +9,10 @@
 // is_optional
 namespace alg::utils {
     namespace {
-        template<typename O, typename = void>
+        template<typename T>
         struct is_optional_ : std::false_type {};
-
-        template<template <typename> typename O, typename T>
-        struct is_optional_<
-            O<T>,
-            std::enable_if_t<
-                std::is_same_v<
-                    O<T>,
-                    std::optional<T>
-                >
-            >
-        > : std::true_type {};
-
+        template<typename T>
+        struct is_optional_<std::optional<T>> : std::true_type {};
         template<>
         struct is_optional_<void_optional> : std::true_type {};
     }
@@ -41,20 +31,18 @@ namespace alg::utils {
 // make_optional
 namespace alg::utils {
     namespace {
-        template<typename T>
-        using make_optional_ =
-            std::conditional<
-                is_optional_v<T>,
-                T,
-                std::conditional_t<
-                    std::is_same_v<
-                        T,
-                        void
-                    >,
-                    void_optional,
-                    std::optional<T>
-                >
-            >;
+        template <typename T>
+        struct make_optional_ {
+            using type = std::optional<T>;
+        };
+        template <typename T>
+        struct make_optional_<std::optional<T>> {
+            using type = std::optional<T>;
+        };
+        template <>
+        struct make_optional_<void> {
+            using type = void_optional;
+        };
     }
 
     template<typename T>
@@ -62,6 +50,32 @@ namespace alg::utils {
 
     template<typename T>
     using make_optional_t = typename make_optional<T>::type;
+}
+
+
+
+// remove_optional
+namespace alg::utils {
+    namespace {
+        template <typename T>
+        struct remove_optional_ {
+            using type = T;
+        };
+        template <typename T>
+        struct remove_optional_<std::optional<T>> {
+            using type = T;
+        };
+        template <>
+        struct remove_optional_<void_optional> {
+            using type = void;
+        };
+    }
+
+    template<typename T>
+    using remove_optional = remove_optional_<std::decay_t<T>>;
+
+    template<typename T>
+    using remove_optional_t = typename remove_optional<T>::type;
 }
 
 
