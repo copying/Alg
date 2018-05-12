@@ -74,7 +74,7 @@ struct Power2 : Algorithm<Power2> {
 
 ```cpp
 // Overlod makes an overloading of the different callable objects.
-constexpr auto default_ = overload {
+constexpr auto default_ = overload_ {
     multi_in_place,
     shift
 };
